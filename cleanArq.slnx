@@ -5,6 +5,7 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="CleanArchMvc.Application/CleanArchMvc.Application.csproj" />
+  <Project Path="CleanArchMvc.Domain.Tests/CleanArchMvc.Domain.Tests.csproj" />
   <Project Path="CleanArchMvc.Domain/CleanArchMvc.Domain.csproj" />
   <Project Path="CleanArchMvc.Infra.Data/CleanArchMvc.Infra.Data.csproj" />
   <Project Path="CleanArchMvc.Infra.IoC/CleanArchMvc.Infra.IoC.csproj" />
