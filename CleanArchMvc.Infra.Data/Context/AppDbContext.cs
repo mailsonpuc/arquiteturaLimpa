@@ -16,11 +16,7 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // modelBuilder.Entity<Category>()
-        //     .HasMany(c => c.Products)
-        //     .WithOne(p => p.Category)
-        //     .HasForeignKey(p => p.CategoryId);
-        
+      
 
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
