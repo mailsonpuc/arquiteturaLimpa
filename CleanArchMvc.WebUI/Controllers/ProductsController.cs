@@ -9,7 +9,10 @@ using CleanArchMvc.Application.Products.Commands;
 using CleanArchMvc.Application.Products.Queries;
 using CleanArchMvc.Application.Categories.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 using Microsoft.Extensions.Logging;
 
 namespace CleanArchMvc.WebUI.Controllers
@@ -19,11 +22,13 @@ namespace CleanArchMvc.WebUI.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _env;
 
-        public ProductsController(IMediator mediator, IMapper mapper)
+        public ProductsController(IMediator mediator, IMapper mapper, IWebHostEnvironment env)
         {
             _mediator = mediator;
             _mapper = mapper;
+            _env = env;
         }
 
         [HttpGet]
@@ -44,13 +49,29 @@ namespace CleanArchMvc.WebUI.Controllers
 
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProductDTO productDto)
+        public async Task<IActionResult> Create(ProductDTO productDto, IFormFile? imageFile)
         {
             if (!ModelState.IsValid)
             {
                 var categories = await _mediator.Send(new GetCategoriesQuery());
                 ViewBag.Categories = _mapper.Map<IEnumerable<CleanArchMvc.Application.DTOs.CategoryDTO>>(categories);
                 return View(productDto);
+            }
+
+            // handle image upload
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var uploads = Path.Combine(_env.WebRootPath, "images");
+                Directory.CreateDirectory(uploads);
+                var ext = Path.GetExtension(imageFile.FileName);
+                var fileName = $"{Guid.NewGuid()}{ext}";
+                var filePath = Path.Combine(uploads, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+                // store relative path or filename
+                productDto.Image = Path.Combine("images", fileName).Replace("\\","/");
             }
 
             var command = new ProductCreateCommand
@@ -83,7 +104,7 @@ namespace CleanArchMvc.WebUI.Controllers
 
         [HttpPost("Edit/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ProductDTO productDto)
+        public async Task<IActionResult> Edit(int id, ProductDTO productDto, IFormFile? imageFile)
         {
             if (id != productDto.ProductId) return BadRequest();
             if (!ModelState.IsValid)
@@ -91,6 +112,21 @@ namespace CleanArchMvc.WebUI.Controllers
                 var categories = await _mediator.Send(new GetCategoriesQuery());
                 ViewBag.Categories = _mapper.Map<IEnumerable<CleanArchMvc.Application.DTOs.CategoryDTO>>(categories);
                 return View(productDto);
+            }
+
+            // handle image upload (replace if provided)
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var uploads = Path.Combine(_env.WebRootPath, "images");
+                Directory.CreateDirectory(uploads);
+                var ext = Path.GetExtension(imageFile.FileName);
+                var fileName = $"{Guid.NewGuid()}{ext}";
+                var filePath = Path.Combine(uploads, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+                productDto.Image = Path.Combine("images", fileName).Replace("\\","/");
             }
 
             var command = new ProductUpdateCommand

@@ -6,8 +6,17 @@
 
 <h2>Edit Product</h2>
 
-<form asp-action="Edit" method="post">
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="ProductId" />
+    @if (!string.IsNullOrEmpty(Model.Image))
+    {
+        <div class="form-group">
+            <label class="control-label">Current Image</label>
+            <div>
+                <img src="@Url.Content("~/" + Model.Image)" alt="@Model.Name" style="max-width:200px; max-height:200px;" />
+            </div>
+        </div>
+    }
     <div class="form-group">
         <label asp-for="Name" class="control-label"></label>
         <input asp-for="Name" class="form-control" />
@@ -34,6 +43,11 @@
             <option value="">-- Select Category --</option>
         </select>
         <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Image (leave empty to keep current)</label>
+        <input type="file" name="imageFile" class="form-control" />
+        <span asp-validation-for="Image" class="text-danger"></span>
     </div>
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Save</button>
