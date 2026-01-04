@@ -8,6 +8,7 @@ using CleanArchMvc.Application.Categories.Commands;
 using CleanArchMvc.Application.Categories.Queries;
 using CleanArchMvc.Application.DTOs;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -84,6 +85,8 @@ namespace CleanArchMvc.WebUI.Controllers
             return View(dto);
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpGet("Delete/{id}")]
         public async Task<IActionResult> Delete(int? id)
         {
