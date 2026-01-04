@@ -67,7 +67,7 @@ Observações:
 
 - O `docker-compose.yml` expõe a API na porta `5000` e o SQL Server na porta `1433`.
 - A variável `ConnectionStrings__DefaultConnection` é injetada no container `web` para apontar para o container `db`.
-- As imagens base usadas no `Dockerfile` são `.NET 8` SDK/ASP.NET — ajuste se você precisar de outro runtime (por exemplo .NET 10).
+- O `Dockerfile` usa imagens `.NET 10` SDK/ASP.NET para corresponder ao target `net10.0`. Ajuste se necessário.
 
 ## Configuração de banco e Identity
 
