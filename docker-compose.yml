@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=1q2w3e4r@#$
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssqldata:/var/opt/mssql
+
+  web:
+    build:
+      context: .
+      dockerfile: CleanArchMvc.WebUI/Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db,1433;Database=arquiteturalimpa;User ID=sa;Password=1q2w3e4r@#$
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    depends_on:
+      - db
+    ports:
+      - "5000:80"
+
+volumes:
+  mssqldata:

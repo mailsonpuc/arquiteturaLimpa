@@ -49,6 +49,26 @@ dotnet run --project CleanArchMvc.WebUI/CleanArchMvc.WebUI.csproj
 
 Abra no navegador: `https://localhost:5001` (ou a URL mostrada no terminal).
 
+### Executar com Docker (opção)
+
+O repositório inclui arquivos Docker para executar a aplicação e um SQL Server via Docker Compose.
+
+Passos:
+
+```bash
+# constrói e sobe containers (primeira vez pode demorar)
+docker compose up --build
+
+# acessa a aplicação via HTTP
+http://localhost:5000
+```
+
+Observações:
+
+- O `docker-compose.yml` expõe a API na porta `5000` e o SQL Server na porta `1433`.
+- A variável `ConnectionStrings__DefaultConnection` é injetada no container `web` para apontar para o container `db`.
+- As imagens base usadas no `Dockerfile` são `.NET 8` SDK/ASP.NET — ajuste se você precisar de outro runtime (por exemplo .NET 10).
+
 ## Configuração de banco e Identity
 
 A string de conexão está em `CleanArchMvc.WebUI/appsettings.json` na chave `ConnectionStrings:DefaultConnection`.
