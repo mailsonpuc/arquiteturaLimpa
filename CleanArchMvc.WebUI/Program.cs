@@ -1,5 +1,7 @@
 using CleanArchMvc.Infra.IoC;
 using CleanArchMvc.Domain.Account;
+using CleanArchMvc.Infra.Data.Context;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,10 @@ using (var scope = app.Services.CreateScope())
 {
     try
     {
+        // Apply EF Core migrations automatically
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        context.Database.Migrate();
+
         var seeder = scope.ServiceProvider.GetService<ISeedUserRoleInitial>();
         seeder?.SeedRoles();
         seeder?.SeedUsers();

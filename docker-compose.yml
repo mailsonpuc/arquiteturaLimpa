@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: CleanArchMvc.WebUI/Dockerfile
     environment:
-      - ConnectionStrings__DefaultConnection=Server=db,1433;Database=arquiteturalimpa;User ID=sa;Password=1q2w3e4r@#$
+      - ConnectionStrings__DefaultConnection=Server=db,1433;Database=arquiteturalimpa;User ID=sa;Password=1q2w3e4r@#$;TrustServerCertificate=True
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
     depends_on:
