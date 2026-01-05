@@ -59,6 +59,62 @@ public class ProductService : IProductService
     }
 
 
+    public async Task<ProductDTO> GetByIdAsync(int? id)
+    {
+        if (id == null) return null!;
+
+        var query = new CleanArchMvc.Application.Products.Queries.GetProductByIdQuery(id.Value);
+        var product = await _mediator.Send(query);
+        return _mapper.Map<ProductDTO>(product);
+    }
+
+
+    public async Task AddAsync(ProductDTO productDto)
+    {
+        if (productDto == null) return;
+
+        var command = new CleanArchMvc.Application.Products.Commands.ProductCreateCommand
+        {
+            Name = productDto.Name,
+            Description = productDto.Description,
+            Price = productDto.Price,
+            Stock = productDto.Stock,
+            Image = productDto.Image,
+            CategoryId = productDto.CategoryId
+        };
+
+        await _mediator.Send(command);
+    }
+
+
+    public async Task UpdateAsync(ProductDTO productDto)
+    {
+        if (productDto == null) return;
+
+        var command = new CleanArchMvc.Application.Products.Commands.ProductUpdateCommand
+        {
+            ProductId = productDto.ProductId,
+            Name = productDto.Name,
+            Description = productDto.Description,
+            Price = productDto.Price,
+            Stock = productDto.Stock,
+            Image = productDto.Image,
+            CategoryId = productDto.CategoryId
+        };
+
+        await _mediator.Send(command);
+    }
+
+
+    public async Task RemoveAsync(int? id)
+    {
+        if (id == null) return;
+
+        var command = new CleanArchMvc.Application.Products.Commands.ProductRemoveCommand(id.Value);
+        await _mediator.Send(command);
+    }
+
+
 
     // public async Task RemoveAsync(int? id)
     // {

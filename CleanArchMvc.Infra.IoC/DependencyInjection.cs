@@ -42,41 +42,46 @@ public static class DependencyInjection
             options.AccessDeniedPath = "/Account/Login";
         });
 
-        // Configure JWT Authentication
+        // Configure JWT Authentication (only if JwtSettings:Key is present)
         var jwtSettings = configuration.GetSection("JwtSettings");
-        var key = Encoding.ASCII.GetBytes(jwtSettings.GetValue<string>("Key"));
+        var keyString = jwtSettings.GetValue<string>("Key");
 
-        services.AddAuthentication(options =>
+        if (!string.IsNullOrEmpty(keyString))
         {
-            options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
-            options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
-        })
-        .AddJwtBearer(options =>
-        {
-            options.RequireHttpsMetadata = false;
-            options.SaveToken = true;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuer = true,
-                ValidIssuer = jwtSettings.GetValue<string>("Issuer"),
-                ValidateAudience = true,
-                ValidAudience = jwtSettings.GetValue<string>("Audience"),
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
-        });
+            var key = Encoding.ASCII.GetBytes(keyString);
 
-        // Add an authorization policy for JWT bearer tokens
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy("Bearer", policy =>
+            services.AddAuthentication(options =>
             {
-                policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
-                policy.RequireAuthenticatedUser();
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtSettings.GetValue<string>("Issuer"),
+                    ValidateAudience = true,
+                    ValidAudience = jwtSettings.GetValue<string>("Audience"),
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
             });
-        });
+
+            // Add an authorization policy for JWT bearer tokens
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Bearer", policy =>
+                {
+                    policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+                    policy.RequireAuthenticatedUser();
+                });
+            });
+        }
 
 
 

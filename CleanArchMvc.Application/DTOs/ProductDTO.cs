@@ -36,5 +36,5 @@ public class ProductDTO
 
     //produto esta relacionado com uma categoria
     public int CategoryId { get; set; }
-    public Category? Category { get; set; }
+    public CategoryDTO? Category { get; set; }
 }

@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
+using CleanArchMvc.Infra.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddEndpointsApiExplorer();
+
+// Register infrastructure services (repositories, application services, automapper, identity, etc.)
+builder.Services.AddInfrastructure(builder.Configuration);
 
 #region Swagger
 
