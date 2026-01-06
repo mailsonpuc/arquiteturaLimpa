@@ -28,6 +28,7 @@ public class TokenController : ControllerBase
     }
 
 
+    // [ApiExplorerSettings(IgnoreApi = true)]
     [HttpPost("register")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(UserToken), 200)]
@@ -43,6 +44,9 @@ public class TokenController : ControllerBase
         var token = GenerateToken(model.Email!);
         return Ok(token);
     }
+
+
+
 
     [HttpPost("login")]
     [Produces("application/json")]
